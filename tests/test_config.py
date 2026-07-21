@@ -1,4 +1,4 @@
-from src.config import CHECK_INTERVAL
+from config import CHECK_INTERVAL
 
 
 def test_check_interval_is_positive():

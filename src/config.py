@@ -14,7 +14,9 @@ DEFAULT_CONFIG = {
     "minimum_price": 0,
     "minimum_words": 0,
     "languages": [],
-    "notifications": {"windows": True},
+    "notifications": {
+        "windows": True,
+    },
 }
 
 
@@ -22,26 +24,47 @@ def load_config() -> dict:
     """
     Load the application configuration from config.json.
 
-    If the configuration file cannot be read, default values are used.
+    If the file cannot be read, default values are used.
+    Missing keys are automatically filled with defaults.
     """
 
+    config = DEFAULT_CONFIG.copy()
+
     if not CONFIG_FILE.exists():
-        return DEFAULT_CONFIG
+        return config
 
     try:
         with open(CONFIG_FILE, "r", encoding="utf-8") as file:
-            return json.load(file)
+            user_config = json.load(file)
 
-    except Exception:
-        print("Warning: Unable to read config.json. Using default configuration.")
-        return DEFAULT_CONFIG
+        # Merge top-level values
+        config.update(
+            {
+                key: value
+                for key, value in user_config.items()
+                if key != "notifications"
+            }
+        )
+
+        # Merge notification settings
+        if "notifications" in user_config:
+            config["notifications"].update(user_config["notifications"])
+
+    except Exception as error:
+        print(f"Warning: Unable to read config.json: {error}")
+        print("Using default configuration.")
+
+    return config
 
 
 # Load configuration once
 config = load_config()
 
 # URLs
-STEPES_URL = config["stepes_url"]
+STEPES_URL = config.get(
+    "stepes_url",
+    DEFAULT_CONFIG["stepes_url"],
+)
 
 # Browser
 PROFILE_DIR = ROOT_DIR / "browser_profile"
@@ -50,13 +73,31 @@ PROFILE_DIR = ROOT_DIR / "browser_profile"
 HISTORY_FILE = ROOT_DIR / "logs" / "history.txt"
 
 # Monitoring
-CHECK_INTERVAL = config["check_interval"]
+CHECK_INTERVAL = config.get(
+    "check_interval",
+    DEFAULT_CONFIG["check_interval"],
+)
 
 # Filters
-MINIMUM_PRICE = config["minimum_price"]
-MINIMUM_WORDS = config["minimum_words"]
-LANGUAGES = config["languages"]
+MINIMUM_PRICE = config.get(
+    "minimum_price",
+    DEFAULT_CONFIG["minimum_price"],
+)
+
+MINIMUM_WORDS = config.get(
+    "minimum_words",
+    DEFAULT_CONFIG["minimum_words"],
+)
+
+LANGUAGES = config.get(
+    "languages",
+    DEFAULT_CONFIG["languages"],
+)
 
 # Notifications
-WINDOWS_NOTIFICATIONS = config["notifications"]["windows"]
+WINDOWS_NOTIFICATIONS = config["notifications"].get(
+    "windows",
+    DEFAULT_CONFIG["notifications"]["windows"],
+)
+
 NOTIFICATION_TITLE = "🟢 New project available"

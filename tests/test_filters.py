@@ -1,5 +1,5 @@
-from src.filters import passes_filters
-from src.models import JobProject
+from filters import passes_filters
+from models import JobProject
 
 
 def create_job(
