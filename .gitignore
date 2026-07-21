@@ -1,0 +1,26 @@
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+
+# Logs
+logs/
+
+# Browser profile
+browser_profile/
+
+# Environment variables
+.env
+
+# Operating system files
+.DS_Store
+Thumbs.db

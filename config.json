@@ -1,0 +1,9 @@
+{
+    "check_interval": 30,
+    "minimum_price": 0,
+    "minimum_words": 0,
+    "languages": [],
+    "notifications": {
+        "windows": true
+    }
+}
