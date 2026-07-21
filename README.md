@@ -97,6 +97,18 @@ The first time the application runs, a Chromium browser window will open and you
 - Logging
 - Executable (.exe)
 
+## Development Status
+
+- ✅ Configuration system
+- ✅ Filtering
+- ✅ Persistent history
+- ✅ Logging
+- ✅ Unit tests
+- ✅ GitHub repository
+- ⏳ GitHub Actions
+- ⏳ Telegram notifications
+- ⏳ Project scoring
+
 ## License
 
 This project is licensed under the MIT License.
