@@ -24,3 +24,11 @@ browser_profile/
 # Operating system files
 .DS_Store
 Thumbs.db
+
+# Test and lint caches
+.pytest_cache/
+.ruff_cache/
+
+# Coverage
+.coverage
+htmlcov/
