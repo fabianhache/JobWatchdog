@@ -18,17 +18,29 @@ def display_job(job: JobProject) -> None:
     Display a newly detected project in the console.
     """
 
-    print(f"\n{SEPARATOR}")
-    print("🟢 NEW PROJECT DETECTED")
-    print(SEPARATOR)
-    print(f"Title      : {job.title}")
-    print(f"Project ID : {job.project_id}")
-    print(f"Language   : {job.language}")
-    print(f"Service    : {job.service}")
-    print(f"Words      : {job.words}")
-    print(f"Price      : USD {job.price:.2f}")
-    print(f"Status     : {job.status}")
-    print(SEPARATOR)
+    logger.info(
+        "\n%s\n"
+        "🟢 NEW PROJECT DETECTED\n"
+        "%s\n"
+        "Title      : %s\n"
+        "Project ID : %s\n"
+        "Language   : %s\n"
+        "Service    : %s\n"
+        "Words      : %d\n"
+        "Price      : USD %.2f\n"
+        "Status     : %s\n"
+        "%s",
+        SEPARATOR,
+        SEPARATOR,
+        job.title,
+        job.project_id,
+        job.language,
+        job.service,
+        job.words,
+        job.price,
+        job.status,
+        SEPARATOR,
+    )
 
 
 def initialize_history(page: Page, history: set[str]) -> None:
@@ -50,8 +62,8 @@ def initialize_history(page: Page, history: set[str]) -> None:
             history.add(job.project_id)
             new_projects += 1
 
-    logger.info("%s project(s) found.", len(jobs))
-    logger.info("%s project(s) added to the history.", new_projects)
+    logger.info("Found %d project(s).", len(jobs))
+    logger.info("Added %d project(s) to the history.", new_projects)
     logger.info("Monitoring started.")
 
 
@@ -62,26 +74,35 @@ def monitor_projects(page: Page, history: set[str]) -> None:
 
     while True:
 
-        page.reload(wait_until="networkidle")
-
         logger.info("Checking for new projects...")
+
+        page.reload(wait_until="networkidle")
 
         jobs = find_job_cards(page)
 
-        new_projects = 0
+        logger.info("Found %d project(s).", len(jobs))
+
+        detected_projects = 0
+        notified_projects = 0
 
         for job in jobs:
 
             if not is_new_project(job.project_id, history):
                 continue
 
+            detected_projects += 1
+
             save_project(job.project_id)
             history.add(job.project_id)
 
             if not passes_filters(job):
+                logger.info(
+                    "Skipped project %s (did not match filters).",
+                    job.project_id,
+                )
                 continue
 
-            new_projects += 1
+            notified_projects += 1
 
             logger.info(
                 "New project detected: %s | %s | USD %.2f",
@@ -94,9 +115,15 @@ def monitor_projects(page: Page, history: set[str]) -> None:
 
             notify(job)
 
-        if new_projects == 0:
+        if detected_projects == 0:
             logger.info("No new projects found.")
+        else:
+            logger.info(
+                "%d new project(s) detected, %d notification(s) sent.",
+                detected_projects,
+                notified_projects,
+            )
 
-        logger.info("Next check in %s seconds.", CHECK_INTERVAL)
+        logger.info("Next check in %d seconds.", CHECK_INTERVAL)
 
         time.sleep(CHECK_INTERVAL)
