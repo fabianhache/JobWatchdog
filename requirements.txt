@@ -1,3 +1,5 @@
 playwright
 win11toast
 pytest
+black
+ruff
