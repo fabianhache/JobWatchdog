@@ -16,6 +16,7 @@ DEFAULT_CONFIG = {
     "languages": [],
     "notifications": {
         "windows": True,
+        "telegram": False,
     },
 }
 
@@ -39,7 +40,11 @@ def load_config() -> dict:
 
         # Merge top-level values
         config.update(
-            {key: value for key, value in user_config.items() if key != "notifications"}
+            {
+                key: value
+                for key, value in user_config.items()
+                if key != "notifications"
+            }
         )
 
         # Merge notification settings
@@ -94,6 +99,11 @@ LANGUAGES = config.get(
 WINDOWS_NOTIFICATIONS = config["notifications"].get(
     "windows",
     DEFAULT_CONFIG["notifications"]["windows"],
+)
+
+TELEGRAM_NOTIFICATIONS = config["notifications"].get(
+    "telegram",
+    DEFAULT_CONFIG["notifications"]["telegram"],
 )
 
 NOTIFICATION_TITLE = "🟢 New project available"

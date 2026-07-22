@@ -3,3 +3,5 @@ win11toast
 pytest
 black
 ruff
+python-dotenv
+requests

@@ -4,6 +4,7 @@
     "minimum_words": 0,
     "languages": [],
     "notifications": {
-        "windows": true
+        "windows": true,
+        "telegram": true
     }
 }

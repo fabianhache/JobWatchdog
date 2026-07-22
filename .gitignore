@@ -32,3 +32,6 @@ Thumbs.db
 # Coverage
 .coverage
 htmlcov/
+
+# Token
+.env
