@@ -1,5 +1,7 @@
 # JobWatchdog
 
+![Python CI](https://github.com/fabianhache/JobWatchdog/actions/workflows/python.yml/badge.svg)
+
 JobWatchdog is a Python application that monitors the Stepes job board and notifies the user whenever a new translation project becomes available.
 
 ## Features
