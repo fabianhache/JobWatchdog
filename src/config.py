@@ -1,8 +1,13 @@
 import json
+import os
 from pathlib import Path
+
+from dotenv import load_dotenv
 
 # Project root
 ROOT_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(ROOT_DIR / ".env")
 
 # Configuration file
 CONFIG_FILE = ROOT_DIR / "config.json"
@@ -11,6 +16,8 @@ CONFIG_FILE = ROOT_DIR / "config.json"
 DEFAULT_CONFIG = {
     "stepes_url": "https://translator.stepes.com/stepes-check-jobs.html",
     "check_interval": 30,
+    "browser_restart_delay": 5,
+    "headless": False,
     "minimum_price": 0,
     "minimum_words": 0,
     "languages": [],
@@ -79,6 +86,16 @@ CHECK_INTERVAL = config.get(
     DEFAULT_CONFIG["check_interval"],
 )
 
+BROWSER_RESTART_DELAY = config.get(
+    "browser_restart_delay",
+    DEFAULT_CONFIG["browser_restart_delay"],
+)
+
+HEADLESS = config.get(
+    "headless",
+    DEFAULT_CONFIG["headless"],
+)
+
 # Filters
 MINIMUM_PRICE = config.get(
     "minimum_price",
@@ -107,3 +124,7 @@ TELEGRAM_NOTIFICATIONS = config["notifications"].get(
 )
 
 NOTIFICATION_TITLE = "🟢 New project available"
+
+# Authentication
+STEPES_USERNAME = os.getenv("STEPES_USERNAME")
+STEPES_PASSWORD = os.getenv("STEPES_PASSWORD")

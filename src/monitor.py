@@ -2,6 +2,7 @@ import time
 
 from playwright.sync_api import Page
 
+from authentication import ensure_authenticated
 from config import CHECK_INTERVAL
 from detector import find_job_cards
 from filters import passes_filters
@@ -43,26 +44,43 @@ def display_job(job: JobProject) -> None:
     )
 
 
-def initialize_history(page: Page, history: set[str]) -> None:
+def scan_projects(page: Page) -> list[JobProject]:
     """
-    Populate the history with existing projects without triggering notifications.
+    Authenticate if needed, refresh the job board and return all projects.
     """
 
-    logger.info("Performing initial scan...")
+    ensure_authenticated(page)
 
     page.reload(wait_until="networkidle")
 
     jobs = find_job_cards(page)
 
+    logger.info("Found %d project(s).", len(jobs))
+
+    return jobs
+
+
+def populate_history(page: Page, history: set[str]) -> None:
+    """
+    Populate the history with existing projects without triggering
+    notifications.
+    """
+
+    logger.info("Performing initial scan...")
+
+    jobs = scan_projects(page)
+
     new_projects = 0
 
     for job in jobs:
-        if is_new_project(job.project_id, history):
-            save_project(job.project_id)
-            history.add(job.project_id)
-            new_projects += 1
 
-    logger.info("Found %d project(s).", len(jobs))
+        if not is_new_project(job.project_id, history):
+            continue
+
+        save_project(job.project_id)
+        history.add(job.project_id)
+        new_projects += 1
+
     logger.info("Added %d project(s) to the history.", new_projects)
     logger.info("Monitoring started.")
 
@@ -76,11 +94,7 @@ def monitor_projects(page: Page, history: set[str]) -> None:
 
         logger.info("Checking for new projects...")
 
-        page.reload(wait_until="networkidle")
-
-        jobs = find_job_cards(page)
-
-        logger.info("Found %d project(s).", len(jobs))
+        jobs = scan_projects(page)
 
         detected_projects = 0
         notified_projects = 0
