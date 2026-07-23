@@ -36,6 +36,7 @@ htmlcov/
 # Distribution / packaging
 build/
 dist/
+*.spec
 *.egg-info/
 
 # Python cache

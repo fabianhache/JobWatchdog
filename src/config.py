@@ -1,12 +1,17 @@
 import json
 import os
+import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
 
 # Project root
-ROOT_DIR = Path(__file__).resolve().parent.parent
+if getattr(sys, "frozen", False):
+    ROOT_DIR = Path(sys.executable).resolve().parent
+else:
+    ROOT_DIR = Path(__file__).resolve().parent.parent
 
+# Environment variables
 load_dotenv(ROOT_DIR / ".env")
 
 # Configuration file
@@ -47,7 +52,11 @@ def load_config() -> dict:
 
         # Merge top-level values
         config.update(
-            {key: value for key, value in user_config.items() if key != "notifications"}
+            {
+                key: value
+                for key, value in user_config.items()
+                if key != "notifications"
+            }
         )
 
         # Merge notification settings
