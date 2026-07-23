@@ -23,9 +23,7 @@ def send_telegram_message(message: str) -> bool:
         True if the message was sent successfully.
     """
     if not BOT_TOKEN or not CHAT_ID:
-        raise ValueError(
-            "Telegram credentials were not found in the .env file."
-        )
+        raise ValueError("Telegram credentials were not found in the .env file.")
 
     response = requests.post(
         f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage",

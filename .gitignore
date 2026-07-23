@@ -33,5 +33,10 @@ Thumbs.db
 .coverage
 htmlcov/
 
-# Token
-.env
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Python cache
+.mypy_cache/

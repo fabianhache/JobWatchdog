@@ -29,8 +29,6 @@ def notify(job: JobProject) -> None:
 
     if TELEGRAM_NOTIFICATIONS:
         try:
-            send_telegram_message(
-                f"{NOTIFICATION_TITLE}\n\n{message}"
-            )
+            send_telegram_message(f"{NOTIFICATION_TITLE}\n\n{message}")
         except Exception as error:
             print(f"Telegram notification failed: {error}")

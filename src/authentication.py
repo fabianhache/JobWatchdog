@@ -64,9 +64,7 @@ def login(page: Page) -> None:
     """
 
     if not STEPES_USERNAME or not STEPES_PASSWORD:
-        raise LoginFailedError(
-            "Stepes credentials are not configured."
-        )
+        raise LoginFailedError("Stepes credentials are not configured.")
 
     logger.info("Credentials loaded successfully.")
 
@@ -91,13 +89,9 @@ def login(page: Page) -> None:
         if is_login_form(page):
             logger.info("Login form detected.")
 
-            page.locator(USERNAME_SELECTOR).fill(
-                STEPES_USERNAME
-            )
+            page.locator(USERNAME_SELECTOR).fill(STEPES_USERNAME)
 
-            page.locator(PASSWORD_SELECTOR).fill(
-                STEPES_PASSWORD
-            )
+            page.locator(PASSWORD_SELECTOR).fill(STEPES_PASSWORD)
 
             page.locator(LOGIN_BUTTON_SELECTOR).click()
 
@@ -123,13 +117,9 @@ def login(page: Page) -> None:
     except TimeoutError as error:
         logger.exception("Login timed out.")
 
-        raise LoginFailedError(
-            "Timed out while waiting for the Job Board."
-        ) from error
+        raise LoginFailedError("Timed out while waiting for the Job Board.") from error
 
-    raise UnknownPageError(
-        "Unable to determine the current Stepes page."
-    )
+    raise UnknownPageError("Unable to determine the current Stepes page.")
 
 
 def ensure_authenticated(page: Page) -> None:

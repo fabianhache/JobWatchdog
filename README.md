@@ -1,56 +1,89 @@
 # JobWatchdog
 
-![Python CI](https://github.com/fabianhache/JobWatchdog/actions/workflows/python.yml/badge.svg)
+JobWatchdog is a Python application that monitors the Stepes Translator job board and automatically notifies the user when new projects become available.
 
-JobWatchdog is a Python application that monitors the Stepes job board and notifies the user whenever a new translation project becomes available.
+The application keeps the browser session authenticated, periodically scans the job board, detects only newly published projects, applies configurable filters, and sends notifications through Windows and Telegram.
 
 ## Features
 
-- Real-time monitoring of the Stepes job board
-- Browser automation with Playwright
-- Persistent project history
-- Duplicate project detection
-- Configurable filtering (price, words and language)
-- JSON-based configuration
+- Automatic authentication
+- Persistent browser session
+- Automatic browser recovery after unexpected closure
+- Configurable monitoring interval
+- Project history to avoid duplicate notifications
+- Project filtering
+  - Minimum price
+  - Minimum word count
+  - Language filters
 - Windows desktop notifications
-- Unit tests with Pytest
+- Telegram notifications
+- Configurable headless mode
+- JSON configuration
+- Environment variable support for credentials
 
 ## Technologies
 
-- Python 3.13
+- Python 3
 - Playwright
-- Win11Toast
-- Pytest
-- Black
-- Ruff
+- python-dotenv
+- winotify
+- Telegram Bot API
 
 ## Project Structure
 
 ```
 JobWatchdog/
-├── assets/
+│
+├── browser.py
+├── authentication.py
+├── config.py
+├── detector.py
+├── filters.py
+├── history.py
+├── logger.py
+├── main.py
+├── models.py
+├── monitor.py
+├── notifications.py
+├── telegram_notifier.py
+│
 ├── browser_profile/
 ├── logs/
-├── src/
-│   ├── browser.py
-│   ├── config.py
-│   ├── detector.py
-│   ├── filters.py
-│   ├── history.py
-│   ├── logger.py
-│   ├── main.py
-│   ├── models.py
-│   ├── monitor.py
-│   └── notifications.py
-├── tests/
-│   ├── test_config.py
-│   ├── test_filters.py
-│   └── test_history.py
+│
 ├── config.json
-├── conftest.py
-├── pyproject.toml
-├── requirements.txt
-└── README.md
+├── .env
+└── requirements.txt
+```
+
+## Configuration
+
+Application settings are stored in `config.json`.
+
+Example:
+
+```json
+{
+    "check_interval": 30,
+    "browser_restart_delay": 5,
+    "headless": true,
+    "minimum_price": 0,
+    "minimum_words": 0,
+    "languages": [],
+    "notifications": {
+        "windows": true,
+        "telegram": true
+    }
+}
+```
+
+Credentials are stored in `.env`.
+
+```
+STEPES_USERNAME=your_email
+STEPES_PASSWORD=your_password
+
+TELEGRAM_BOT_TOKEN=xxxxxxxx
+TELEGRAM_CHAT_ID=xxxxxxxx
 ```
 
 ## Installation
@@ -58,7 +91,7 @@ JobWatchdog/
 Clone the repository:
 
 ```bash
-git clone https://github.com/fabianhache/JobWatchdog.git
+git clone https://github.com/<username>/JobWatchdog.git
 cd JobWatchdog
 ```
 
@@ -70,43 +103,21 @@ python -m venv .venv
 
 Activate it:
 
-**Windows**
+Windows
 
 ```bash
 .venv\Scripts\activate
 ```
 
-**macOS / Linux**
-
-```bash
-source .venv/bin/activate
-```
-
-Install the dependencies:
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Install the Playwright browser:
+Create the `.env` file.
 
-```bash
-playwright install
-```
-
-## Configuration
-
-The application can be configured through the `config.json` file.
-
-Available options include:
-
-- Monitoring interval
-- Minimum project price
-- Minimum word count
-- Allowed language pairs
-- Windows notifications
-
-## Usage
+Adjust `config.json` if needed.
 
 Run the application:
 
@@ -114,31 +125,25 @@ Run the application:
 python src/main.py
 ```
 
-The first time the application runs, a Chromium browser window will open and you will need to sign in to your Stepes account. The browser profile is saved locally and reused in future sessions.
+## How It Works
 
-## Planned Features
+1. Launches a persistent browser session.
+2. Authenticates if necessary.
+3. Performs an initial scan.
+4. Stores existing project IDs.
+5. Periodically refreshes the job board.
+6. Detects newly published projects.
+7. Applies user-defined filters.
+8. Sends notifications.
+9. Automatically recovers if the browser is unexpectedly closed.
 
-- Telegram notifications
-- Discord notifications
-- Email notifications
-- Project scoring
-- CSV export
-- Executable (.exe)
+## Roadmap
 
-## Development Status
-
-- ✅ Configuration system
-- ✅ Filtering
-- ✅ Persistent history
-- ✅ Logging
-- ✅ Unit tests
-- ✅ GitHub repository
-- ⏳ GitHub Actions
-- ⏳ Telegram notifications
-- ⏳ CSV export
-- ⏳ Project scoring
-
+- Unit tests
+- GitHub Actions
+- Executable package with PyInstaller
+- Additional notification providers
 
 ## License
 
-This project is licensed under the MIT License.
+This project is intended for educational and portfolio purposes.
