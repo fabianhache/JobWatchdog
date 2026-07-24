@@ -10,7 +10,7 @@ from history import is_new_project, save_project
 from logger import logger
 from models import JobProject
 from notifications import notify
-from monitor_state import pause_event
+from monitor_state import pause_event, stop_event
 
 SEPARATOR = "=" * 60
 
@@ -91,9 +91,15 @@ def monitor_projects(page: Page, history: set[str]) -> None:
     Continuously monitor the Stepes job board for new projects.
     """
 
-    while True:
+    while not stop_event.is_set():
 
-        pause_event.wait()
+        while not pause_event.is_set():
+
+            if stop_event.is_set():
+                logger.info("Monitoring stopped.")
+                return
+
+            time.sleep(0.2)
 
         try:
 
@@ -105,6 +111,10 @@ def monitor_projects(page: Page, history: set[str]) -> None:
             notified_projects = 0
 
             for job in jobs:
+
+                if stop_event.is_set():
+                    logger.info("Monitoring stopped.")
+                    return
 
                 if not is_new_project(job.project_id, history):
                     continue
@@ -163,4 +173,10 @@ def monitor_projects(page: Page, history: set[str]) -> None:
 
         logger.info("Next check in %d seconds.", CHECK_INTERVAL)
 
-        time.sleep(CHECK_INTERVAL)
+        for _ in range(CHECK_INTERVAL * 10):
+
+            if stop_event.is_set():
+                logger.info("Monitoring stopped.")
+                return
+
+            time.sleep(0.1)

@@ -53,11 +53,7 @@ def load_config() -> dict:
 
         # Merge top-level values
         config.update(
-            {
-                key: value
-                for key, value in user_config.items()
-                if key != "notifications"
-            }
+            {key: value for key, value in user_config.items() if key != "notifications"}
         )
 
         # Merge notification settings

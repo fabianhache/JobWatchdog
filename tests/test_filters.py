@@ -40,8 +40,6 @@ def test_job_with_zero_words():
 
 
 def test_custom_language():
-    job = make_job(
-        language="English (UK) > Spanish (Spain)"
-    )
+    job = make_job(language="English (UK) > Spanish (Spain)")
 
     assert passes_filters(job)

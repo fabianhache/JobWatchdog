@@ -8,7 +8,9 @@ from config import BROWSER_RESTART_DELAY, HEADLESS
 from history import load_history
 from logger import logger
 from monitor import monitor_projects, populate_history
+from monitor_state import stop_event
 from tray import create_tray_icon
+import single_instance
 
 SEPARATOR = "=" * 50
 
@@ -24,7 +26,7 @@ def monitor_loop() -> None:
 
     first_session = True
 
-    while True:
+    while not stop_event.is_set():
 
         playwright = None
         browser = None
@@ -48,6 +50,9 @@ def monitor_loop() -> None:
 
         except Error as error:
 
+            if stop_event.is_set():
+                break
+
             if "Target page, context or browser has been closed" not in str(error):
                 raise
 
@@ -56,10 +61,16 @@ def monitor_loop() -> None:
                 BROWSER_RESTART_DELAY,
             )
 
-            time.sleep(BROWSER_RESTART_DELAY)
+            for _ in range(BROWSER_RESTART_DELAY * 10):
+
+                if stop_event.is_set():
+                    break
+
+                time.sleep(0.1)
 
         except KeyboardInterrupt:
             logger.info("Stopping JobWatchdog...")
+            stop_event.set()
             break
 
         finally:
@@ -71,6 +82,8 @@ def monitor_loop() -> None:
                 playwright.stop()
 
             logger.info("Browser closed.")
+
+    logger.info("Monitor thread stopped.")
 
 
 def main() -> None:
@@ -91,6 +104,12 @@ def main() -> None:
 
     tray = create_tray_icon("assets/jobwatchdog.ico")
     tray.run()
+
+    logger.info("Waiting for monitor thread...")
+
+    monitor_thread.join()
+
+    logger.info("JobWatchdog stopped.")
 
 
 if __name__ == "__main__":

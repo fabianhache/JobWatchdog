@@ -1,10 +1,11 @@
-import os
+import webbrowser
 
 from PIL import Image
 import pystray
 
+from config import STEPES_URL
 from logger import logger
-from monitor_state import pause_event
+from monitor_state import pause_event, stop_event
 
 
 def create_tray_icon(icon_path: str) -> pystray.Icon:
@@ -31,8 +32,13 @@ def create_tray_icon(icon_path: str) -> pystray.Icon:
             ),
             pystray.Menu.SEPARATOR,
             pystray.MenuItem(
+                "Open Stepes",
+                open_stepes,
+            ),
+            pystray.Menu.SEPARATOR,
+            pystray.MenuItem(
                 "Exit",
-                lambda icon, item: exit_application(icon),
+                exit_application,
             ),
         ),
     )
@@ -45,6 +51,7 @@ def pause_monitoring(icon: pystray.Icon, item) -> None:
 
     pause_event.clear()
     icon.update_menu()
+
     logger.info("Monitoring paused.")
 
 
@@ -55,18 +62,32 @@ def resume_monitoring(icon: pystray.Icon, item) -> None:
 
     pause_event.set()
     icon.update_menu()
+
     logger.info("Monitoring resumed.")
 
 
-def exit_application(icon: pystray.Icon) -> None:
+def open_stepes(icon: pystray.Icon, item) -> None:
     """
-    Stop the tray icon and terminate the application.
+    Open the Stepes job board in the default web browser.
+    """
+
+    logger.info("Opening Stepes...")
+
+    webbrowser.open(STEPES_URL)
+
+
+def exit_application(icon: pystray.Icon, item) -> None:
+    """
+    Stop monitoring and close the application gracefully.
     """
 
     logger.info("Stopping JobWatchdog...")
 
+    stop_event.set()
+
+    pause_event.set()
+
     icon.stop()
-    os._exit(0)
 
 
 if __name__ == "__main__":
