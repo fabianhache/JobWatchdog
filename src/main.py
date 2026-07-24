@@ -10,7 +10,6 @@ from logger import logger
 from monitor import monitor_projects, populate_history
 from monitor_state import stop_event
 from tray import create_tray_icon
-import single_instance
 
 SEPARATOR = "=" * 50
 
