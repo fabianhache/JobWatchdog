@@ -22,14 +22,14 @@ DEFAULT_CONFIG = {
     "stepes_url": "https://translator.stepes.com/stepes-check-jobs.html",
     "check_interval": 30,
     "browser_restart_delay": 5,
-    "headless": False,
+    "headless": True,
     "minimum_price": 0,
     "minimum_words": 0,
     "languages": [],
     "excluded_languages": [],
     "notifications": {
         "windows": True,
-        "telegram": False,
+        "telegram": True,
     },
 }
 

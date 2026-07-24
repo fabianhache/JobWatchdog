@@ -1,3 +1,4 @@
+import threading
 import time
 
 from playwright.sync_api import Error
@@ -7,18 +8,15 @@ from config import BROWSER_RESTART_DELAY, HEADLESS
 from history import load_history
 from logger import logger
 from monitor import monitor_projects, populate_history
+from tray import create_tray_icon
 
 SEPARATOR = "=" * 50
 
 
-def main() -> None:
+def monitor_loop() -> None:
     """
-    Application entry point.
+    Monitor Stepes projects continuously.
     """
-
-    logger.info(SEPARATOR)
-    logger.info("JobWatchdog started")
-    logger.info(SEPARATOR)
 
     history = load_history()
 
@@ -73,6 +71,26 @@ def main() -> None:
                 playwright.stop()
 
             logger.info("Browser closed.")
+
+
+def main() -> None:
+    """
+    Application entry point.
+    """
+
+    logger.info(SEPARATOR)
+    logger.info("JobWatchdog started")
+    logger.info(SEPARATOR)
+
+    monitor_thread = threading.Thread(
+        target=monitor_loop,
+        daemon=True,
+    )
+
+    monitor_thread.start()
+
+    tray = create_tray_icon("assets/jobwatchdog.ico")
+    tray.run()
 
 
 if __name__ == "__main__":
