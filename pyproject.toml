@@ -5,5 +5,12 @@ line-length = 88
 line-length = 88
 target-version = "py313"
 
+[tool.ruff.lint]
+ignore = [
+    "BLE001",  # Blind exception (aceptado para logging/notificaciones)
+    "DTZ007",  # Naive datetime (Stepes no envía timezone)
+    "SIM103",  # Prefiero la versión legible del if
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
