@@ -26,6 +26,7 @@ DEFAULT_CONFIG = {
     "minimum_price": 0,
     "minimum_words": 0,
     "languages": [],
+    "excluded_languages": [],
     "notifications": {
         "windows": True,
         "telegram": False,
@@ -110,6 +111,11 @@ MINIMUM_PRICE = config.get(
 MINIMUM_WORDS = config.get(
     "minimum_words",
     DEFAULT_CONFIG["minimum_words"],
+)
+
+EXCLUDED_LANGUAGES = config.get(
+    "excluded_languages",
+    DEFAULT_CONFIG["excluded_languages"],
 )
 
 LANGUAGES = config.get(

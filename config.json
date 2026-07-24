@@ -2,12 +2,15 @@
     "stepes_url": "https://translator.stepes.com/stepes-check-jobs.html",
     "check_interval": 30,
     "browser_restart_delay": 5,
-    "headless": true,
+    "headless": false,
     "minimum_price": 0,
     "minimum_words": 0,
     "languages": [],
+    "excluded_languages": [
+    "English (EN) > Spanish (ES)"
+    ],
     "notifications": {
         "windows": true,
-        "telegram": false
+        "telegram": true
     }
 }

@@ -9,7 +9,7 @@ def format_notification(job: JobProject) -> str:
     """
 
     return (
-        f"🟢 {job.title}\n\n"
+        f"{job.title}\n\n"
         f"💵 ${job.price:.2f} • {job.words:,}w\n"
         f"📚 {job.subject}\n"
         f"{format_due_date(job.due_date)}\n\n"

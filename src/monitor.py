@@ -1,6 +1,6 @@
 import time
 
-from playwright.sync_api import Page
+from playwright.sync_api import Error, Page
 
 from authentication import ensure_authenticated
 from config import CHECK_INTERVAL
@@ -92,50 +92,70 @@ def monitor_projects(page: Page, history: set[str]) -> None:
 
     while True:
 
-        logger.info("Checking for new projects...")
+        try:
 
-        jobs = scan_projects(page)
+            logger.info("Checking for new projects...")
 
-        detected_projects = 0
-        notified_projects = 0
+            jobs = scan_projects(page)
 
-        for job in jobs:
+            detected_projects = 0
+            notified_projects = 0
 
-            if not is_new_project(job.project_id, history):
-                continue
+            for job in jobs:
 
-            detected_projects += 1
+                if not is_new_project(job.project_id, history):
+                    continue
 
-            save_project(job.project_id)
-            history.add(job.project_id)
+                detected_projects += 1
 
-            if not passes_filters(job):
+                save_project(job.project_id)
+                history.add(job.project_id)
+
+                if not passes_filters(job):
+                    logger.info(
+                        "Skipped project %s (did not match filters).",
+                        job.project_id,
+                    )
+                    continue
+
+                notified_projects += 1
+
                 logger.info(
-                    "Skipped project %s (did not match filters).",
+                    "New project detected: %s | %s | USD %.2f",
                     job.project_id,
+                    job.language,
+                    job.price,
                 )
-                continue
 
-            notified_projects += 1
+                display_job(job)
 
-            logger.info(
-                "New project detected: %s | %s | USD %.2f",
-                job.project_id,
-                job.language,
-                job.price,
+                notify(job)
+
+            if detected_projects == 0:
+                logger.info("No new projects found.")
+            else:
+                logger.info(
+                    "%d new project(s) detected, %d notification(s) sent.",
+                    detected_projects,
+                    notified_projects,
+                )
+
+        except Error as error:
+
+            # Let main.py handle browser restarts.
+            if "Target page, context or browser has been closed" in str(error):
+                raise
+
+            logger.warning(
+                "Monitoring failed: %s",
+                error,
             )
 
-            display_job(job)
+        except Exception as error:
 
-            notify(job)
-
-        if detected_projects == 0:
-            logger.info("No new projects found.")
-        else:
-            logger.info(
-                "%d new project(s) detected, %d notification(s) sent.",
-                detected_projects,
-                notified_projects,
+            logger.warning(
+                "Unexpected monitoring error: %s",
+                error,
             )
 
         logger.info("Next check in %d seconds.", CHECK_INTERVAL)
