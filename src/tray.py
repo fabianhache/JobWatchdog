@@ -1,7 +1,7 @@
 import webbrowser
 
-from PIL import Image
 import pystray
+from PIL import Image
 
 from config import STEPES_URL
 from logger import logger

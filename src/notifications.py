@@ -1,3 +1,5 @@
+from win11toast import toast
+
 from config import (
     NOTIFICATION_TITLE,
     TELEGRAM_NOTIFICATIONS,
@@ -6,8 +8,6 @@ from config import (
 from formatter import format_notification
 from models import JobProject
 from telegram_notifications import send_telegram_message
-
-from win11toast import toast
 
 
 def notify(job: JobProject) -> None:

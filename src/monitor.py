@@ -9,8 +9,8 @@ from filters import passes_filters
 from history import is_new_project, save_project
 from logger import logger
 from models import JobProject
-from notifications import notify
 from monitor_state import pause_event, stop_event
+from notifications import notify
 
 SEPARATOR = "=" * 60
 
