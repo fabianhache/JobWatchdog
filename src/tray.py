@@ -1,3 +1,5 @@
+import os
+import sys
 import webbrowser
 
 import pystray
@@ -8,12 +10,25 @@ from logger import logger
 from monitor_state import pause_event, stop_event
 
 
+def resource_path(relative_path: str) -> str:
+    """
+    Return the absolute path to a bundled resource.
+    """
+
+    if hasattr(sys, "_MEIPASS"):
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+
+    return os.path.join(base_path, relative_path)
+
+
 def create_tray_icon(icon_path: str) -> pystray.Icon:
     """
     Create the JobWatchdog system tray icon.
     """
 
-    image = Image.open(icon_path)
+    image = Image.open(resource_path(icon_path))
 
     return pystray.Icon(
         "JobWatchdog",
