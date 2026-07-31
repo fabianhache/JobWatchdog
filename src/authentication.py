@@ -1,6 +1,6 @@
 from playwright.sync_api import Page, TimeoutError
 
-from config import STEPES_PASSWORD, STEPES_USERNAME, STEPES_URL
+from config import STEPES_PASSWORD, STEPES_URL, STEPES_USERNAME
 from exceptions import LoginFailedError, UnknownPageError
 from logger import logger
 
